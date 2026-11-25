@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">OpenMausBot</string>
+    <string name="title_activity_main">OpenMausBot</string>
+    <string name="package_name">com.openmausbot.app</string>
+    <string name="custom_url_scheme">com.openmausbot.app</string>
+</resources>
