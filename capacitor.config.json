@@ -4,7 +4,7 @@
   "webDir": "dist",
   "server": {
     "androidScheme": "https",
-    "hostname": "100.68.21.37",
+    "hostname": "sql-musical-gospel-and.trycloudflare.com",
     "cleartext": false
   },
   "plugins": {

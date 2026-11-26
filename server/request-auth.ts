@@ -625,6 +625,8 @@ export interface ResolveOptions {
   cliOwnerToken?: string;
   /** resolveLoopbackTrust's `localBrowsers`: a development server lets this machine's browsers use loopback trust. */
   trustLocalBrowser?: boolean;
+  /** Static query token from OMB_QUERY_TOKEN env for ?token=xxx auth */
+  staticQueryToken?: string;
   /** Why a session made for one task may not make this request (a Team Cloud's sign-in that moves one bot in), else null. */
   restricted?(session: SessionRecord, method: string, path: string, url: URL): string | null;
   /** The sentence a person reads when their session lacks the scope for this request; null keeps the bare refusal. */
@@ -672,6 +674,12 @@ export function resolveRequestAuth(req: IncomingMessage, options: ResolveOptions
   const method = req.method ?? "GET";
   const path = options.url.pathname;
   const deny = (status: 401 | 403, error: string): RequestAuthResult => ({ auth: null, status, error });
+
+  // Check static query token first (bypass session, grant loopback access)
+  const queryToken = options.url.searchParams.get("token");
+  if (queryToken && options.staticQueryToken && secureTokenMatch(queryToken, options.staticQueryToken)) {
+    return { auth: { kind: "loopback", scopes: LOOPBACK_SCOPES }, status: 401, error: "" };
+  }
 
   // A presented session credential wins over the loopback rule.
   const bearer = bearerToken(req.headers.authorization);
