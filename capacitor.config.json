@@ -4,7 +4,8 @@
   "webDir": "dist",
   "server": {
     "androidScheme": "https",
-    "hostname": "sql-musical-gospel-and.trycloudflare.com",
+    "hostname": "openmausbot.ikamai.com",
+    "url": "https://openmausbot.ikamai.com",
     "cleartext": false
   },
   "plugins": {
