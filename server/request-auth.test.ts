@@ -290,6 +290,24 @@ describe("resolveRequestAuth", () => {
   });
   afterEach(() => rmSync(dir, { recursive: true, force: true }));
 
+  it("accepts the configured static query token without adding lines to the server entry", () => {
+    const original = process.env.OMB_QUERY_TOKEN;
+    process.env.OMB_QUERY_TOKEN = "test-query-token";
+    try {
+      const result = resolveRequestAuth(request({ host: "example.test" }), {
+        sessions, cookieName, streamPath: "/api/events", url: new URL("/api/bots?token=test-query-token", "http://example.test"),
+      });
+      expect(result.auth).toEqual({ kind: "loopback", scopes: ["admin", "client"] });
+      const invalid = resolveRequestAuth(request({ host: "example.test" }), {
+        sessions, cookieName, streamPath: "/api/events", url: new URL("/api/bots?token=wrong", "http://example.test"),
+      });
+      expect(invalid.auth).toBeNull();
+    } finally {
+      if (original === undefined) delete process.env.OMB_QUERY_TOKEN;
+      else process.env.OMB_QUERY_TOKEN = original;
+    }
+  });
+
   it("treats a request the companion carries for a web session as remote: only its own session counts", () => {
     // The companion's real headers (companion/src/session-route.ts), however the device dressed the request.
     const carried = (headers: Record<string, string>) =>

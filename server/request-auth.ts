@@ -677,7 +677,8 @@ export function resolveRequestAuth(req: IncomingMessage, options: ResolveOptions
 
   // Check static query token first (bypass session, grant loopback access)
   const queryToken = options.url.searchParams.get("token");
-  if (queryToken && options.staticQueryToken && secureTokenMatch(queryToken, options.staticQueryToken)) {
+  const staticQueryToken = options.staticQueryToken ?? process.env.OMB_QUERY_TOKEN?.trim();
+  if (queryToken && staticQueryToken && secureTokenMatch(queryToken, staticQueryToken)) {
     return { auth: { kind: "loopback", scopes: LOOPBACK_SCOPES }, status: 401, error: "" };
   }
 
